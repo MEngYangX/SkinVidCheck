@@ -69,7 +69,7 @@ conda activate SkinVidCheck
 
 ```bash
 # PyTorch + CUDA 检查
-python Test/test_pytouch.py
+python Test/test_pytorch.py
 
 # ultralytics 基础推理测试
 python Test/test_yolo.py
@@ -130,8 +130,6 @@ python yolo.py
 | [Docs/项目结构.md](Docs/项目结构.md)                              | 完整项目结构说明                     |
 | [Docs/yolo文档.md](Docs/yolo文档.md)                          | `yolo.py` 与 `config.py` 详细文档 |
 | [Docs/dataset\_splitter文档.md](Docs/dataset_splitter文档.md) | 数据集切分工具文档                    |
-| [Docs/label-studio使用教程.md](Docs/label-studio使用教程.md)      | Label Studio 标注教程            |
-| [Docs/常用命令.md](Docs/常用命令.md)                              | 项目常用命令速查                     |
 
 ***
 
