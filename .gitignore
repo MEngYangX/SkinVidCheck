@@ -1,0 +1,12 @@
+MyData/
+training_output/
+__pycache__/
+.vscode/
+Docs/others/
+train_data/
+
+yolo26l-seg.pt
+yolo26x-seg.pt
+yolo26m-seg.pt
+yolo26s-seg.pt
+yolo26n.pt
