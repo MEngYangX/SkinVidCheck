@@ -69,7 +69,7 @@ conda activate SkinVidCheck
 
 ```bash
 # PyTorch + CUDA 检查
-python Test/test_pytouch.py
+python Test/test_pytorch.py
 
 # ultralytics 基础推理测试
 python Test/test_yolo.py
