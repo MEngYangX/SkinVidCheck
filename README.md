@@ -107,11 +107,11 @@ python yolo.py
 
 本项目训练数据来源于以下公开 Kaggle 数据集：
 
-| 数据集                                         | 类别示例                          | 来源                                                                                                                                       |
-| ------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **Skin Diseases**                           | 感染性皮肤病、湿疹、痤疮、色素性疾病、良性肿瘤、恶性肿瘤  | [Kaggle - Skin Diseases](https://www.kaggle.com/datasets/ascanipek/skin-diseases)                                                        |
-| **Augmented Skin Conditions Image Dataset** | 痤疮、皮肤癌、湿疹、角化症、粟丘疹、玫瑰痤疮        | [Kaggle - Augmented Skin Conditions Image Dataset](https://www.kaggle.com/datasets/syedalinaqvi/augmented-skin-conditions-image-dataset) |
-| **Skin Disease Dataset**                    | 痤疮、湿疹、银屑病、白癜风、皮肤癌、狼疮等 23 类皮肤病 | [Kaggle - Skin Disease Dataset](https://www.kaggle.com/datasets/pacificrm/skindiseasedataset)                                            |
+| 数据集                                         | 来源                                                                                                                                       |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Skin Diseases**                           | [Kaggle - Skin Diseases](https://www.kaggle.com/datasets/ascanipek/skin-diseases)                                                        |
+| **Augmented Skin Conditions Image Dataset** | [Kaggle - Augmented Skin Conditions Image Dataset](https://www.kaggle.com/datasets/syedalinaqvi/augmented-skin-conditions-image-dataset) |
+| **Skin Disease Dataset**                    | [Kaggle - Skin Disease Dataset](https://www.kaggle.com/datasets/pacificrm/skindiseasedataset)                                            |
 
 ***
 
