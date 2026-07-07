@@ -43,7 +43,7 @@ class Config:
     IMG_SIZE = 800
     
     # 总训练轮数
-    EPOCHS = 200
+    EPOCHS = 300
     
     # 批次大小
     BATCH_SIZE = 8
@@ -59,7 +59,7 @@ class Config:
     OPTIMIZER = "AdamW"
     
     # 早停耐心值（验证集 mAP 不提升的轮数）
-    PATIENCE = 30
+    PATIENCE = 45
     
     # 随机种子，保证结果可复现
     SEED = 42
