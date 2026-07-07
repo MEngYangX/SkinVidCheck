@@ -381,21 +381,92 @@ def get_metric(results, key_with_b, key_without_b, default=0.0):
     return default
 
 
-def archive_best_model(run_dir: Path, models_dir: Path) -> Path:
+def _generate_model_readme(
+    dst_dir: Path,
+    run_dir: Path,
+    val_results,
+    test_results,
+) -> Path:
     """
-    将 best.pt 复制到 Models 归档目录
-    命名规则：{run_dir_name}.pt（与训练输出目录同名）
+    在归档目录下生成 README.md，含模型概述与性能指标
 
-    示例：
-        D:\SkinVidCheck\training_output\2026-07-05_16-05-31\weights\best.pt
-        → D:\SkinVidCheck\Models\2026-07-05_16-05-31.pt
+    Args:
+        dst_dir: 归档目录（即 Models/<时间戳>/）
+        run_dir: 训练输出目录（用于从 run_dir.name 取时间戳）
+        val_results: ultralytics 验证结果对象（可为 None）
+        test_results: ultralytics 测试结果对象（可为 None）
+
+    Returns:
+        README.md 的路径
+    """
+
+    def _fmt(results, key_with_b, key_without_b):
+        if results is None:
+            return "N/A"
+        return f"{get_metric(results, key_with_b, key_without_b, 0.0):.4f}"
+
+    model_basename = os.path.basename(Config.MODEL_PATH)
+    timestamp = run_dir.name
+    archived_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    readme_path = dst_dir / "README.md"
+    with open(readme_path, 'w', encoding='utf-8') as f:
+        f.write("# 模型归档\n\n")
+        f.write(f"- 训练时间戳：`{timestamp}`\n")
+        f.write(f"- 归档时间：{archived_at}\n\n")
+
+        f.write("## 模型概述\n\n")
+        f.write("| 项目 | 数值 |\n")
+        f.write("| --- | --- |\n")
+        f.write(f"| 底座模型 | `{model_basename}` |\n")
+        f.write(f"| 输入尺寸 | {Config.IMG_SIZE} × {Config.IMG_SIZE} |\n")
+        f.write(f"| 训练轮数 | {Config.EPOCHS}（早停 patience={Config.PATIENCE}） |\n")
+        f.write(f"| 批次大小 | {Config.BATCH_SIZE} |\n")
+        f.write(f"| 优化器 | {Config.OPTIMIZER}，学习率 {Config.LEARNING_RATE} |\n")
+        f.write(f"| 数据集 | `{Config.DATASET_ROOT}` |\n\n")
+
+        f.write("## 性能指标\n\n")
+        f.write("### 验证集\n\n")
+        f.write("| 指标 | 数值 |\n")
+        f.write("| --- | --- |\n")
+        f.write(f"| mAP@0.5 | {_fmt(val_results, 'metrics/mAP50(B)', 'metrics/mAP50')} |\n")
+        f.write(f"| mAP@0.5:0.95 | {_fmt(val_results, 'metrics/mAP50-95(B)', 'metrics/mAP50-95')} |\n")
+        f.write(f"| 精确率 (Precision) | {_fmt(val_results, 'metrics/precision(B)', 'metrics/precision')} |\n")
+        f.write(f"| 召回率 (Recall) | {_fmt(val_results, 'metrics/recall(B)', 'metrics/recall')} |\n\n")
+
+        f.write("### 测试集\n\n")
+        f.write("| 指标 | 数值 |\n")
+        f.write("| --- | --- |\n")
+        f.write(f"| mAP@0.5 | {_fmt(test_results, 'metrics/mAP50(B)', 'metrics/mAP50')} |\n")
+        f.write(f"| mAP@0.5:0.95 | {_fmt(test_results, 'metrics/mAP50-95(B)', 'metrics/mAP50-95')} |\n")
+
+    print(f"  [模型归档] README.md → {readme_path}")
+    return readme_path
+
+
+def archive_best_model(
+    run_dir: Path,
+    models_dir: Path,
+    val_results=None,
+    test_results=None,
+) -> Path:
+    """
+    将 best.pt 与 README.md 归档到 Models/<时间戳>/ 目录
+
+    目录结构：
+        D:\SkinVidCheck\training_output\2026-07-05_18-50-15\weights\best.pt
+        → D:\SkinVidCheck\Models\2026-07-05_18-50-15\
+            ├── best.pt
+            └── README.md
 
     Args:
         run_dir: 训练输出目录（含 weights/best.pt）
         models_dir: Models 归档根目录
+        val_results: ultralytics 验证结果对象（用于 README 性能指标）
+        test_results: ultralytics 测试结果对象（用于 README 性能指标）
 
     Returns:
-        目标文件路径（成功），或 None（失败/源文件不存在）
+        归档目录路径（成功），或 None（失败 / 源文件不存在）
     """
     src = run_dir / 'weights' / 'best.pt'
     if not src.exists():
@@ -405,17 +476,30 @@ def archive_best_model(run_dir: Path, models_dir: Path) -> Path:
     # 确保 Models 目录存在
     models_dir.mkdir(parents=True, exist_ok=True)
 
-    # 目标：Models/<run_dir_name>.pt
-    dst = models_dir / f"{run_dir.name}.pt"
+    # 目标目录：Models/<run_dir_name>/
+    dst_dir = models_dir / run_dir.name
+    dst_dir.mkdir(parents=True, exist_ok=True)
 
+    # 复制 best.pt
+    dst_pt = dst_dir / 'best.pt'
     try:
-        shutil.copy2(src, dst)
-        size_mb = dst.stat().st_size / (1024 * 1024)
-        print(f"  [模型归档] best.pt → {dst} ({size_mb:.2f} MB)")
-        return dst
+        shutil.copy2(src, dst_pt)
+        size_mb = dst_pt.stat().st_size / (1024 * 1024)
+        print(f"  [模型归档] best.pt → {dst_pt} ({size_mb:.2f} MB)")
     except Exception as e:
-        print(f"  [模型归档] 失败: {e}")
+        print(f"  [模型归档] 复制 best.pt 失败: {e}")
         return None
+
+    # 生成 README.md
+    try:
+        _generate_model_readme(dst_dir, run_dir, val_results, test_results)
+    except Exception as e:
+        print(f"  [模型归档] 生成 README.md 失败: {e}")
+        import traceback
+        traceback.print_exc()
+
+    print(f"  [模型归档] 完成 → {dst_dir} (含 best.pt + README.md)")
+    return dst_dir
 
 
 # ==================== 主训练流程 ====================
@@ -510,13 +594,18 @@ def main():
             # 数据增强
             augment=True,
             mosaic=Config.MOSAIC,
+            close_mosaic=Config.CLOSE_MOSAIC,
             mixup=Config.MIXUP,
+            copy_paste=Config.COPY_PASTE,
+            erasing=Config.ERASING,
             hsv_h=Config.HSV_H,
             hsv_s=Config.HSV_S,
             hsv_v=Config.HSV_V,
             degrees=Config.DEGREES,
             translate=Config.TRANSLATE,
             scale=Config.SCALE,
+            shear=Config.SHEAR,
+            perspective=Config.PERSPECTIVE,
             flipud=Config.FLIPUD,
             fliplr=Config.FLIPLR,
             
@@ -644,9 +733,9 @@ def main():
     # 归档所有图表（将 YOLO 生成的图表移动到 analysis 文件夹）
     organize_charts(run_dir, analysis_dir)
 
-    # 归档 best.pt 到 Models 文件夹（路径可由 Config.MODELS_DIR 自定义）
+    # 归档 best.pt 与 README 到 Models/<时间戳>/ 文件夹（路径可由 Config.MODELS_DIR 自定义）
     models_dir = Path(Config.MODELS_DIR)
-    archived_model_path = archive_best_model(run_dir, models_dir)
+    archived_model_path = archive_best_model(run_dir, models_dir, val_results, test_results)
 
     # 生成最终报告
     try:

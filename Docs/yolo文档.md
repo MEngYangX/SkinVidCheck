@@ -15,10 +15,10 @@
 
 ## 1. 概述
 
-| 文件          | 行数  | 核心职责                                                  |
-| ----------- | --- | ----------------------------------------------------- |
-| `config.py` | 144 | 集中管理训练超参数（路径、硬件、训练参数、增强、损失、验证阈值、模型归档）                 |
-| `yolo.py`   | 665 | 训练主流程：环境准备 → 加载数据 → 训练 → 验证 → 测试 → 可视化归档 → best.pt 归档 |
+| 文件          | 核心职责                                                  |
+| ----------- | ----------------------------------------------------- |
+| `config.py` | 集中管理训练超参数（路径、硬件、训练参数、增强、损失、验证阈值、模型归档）                 |
+| `yolo.py`   | 训练主流程：环境准备 → 加载数据 → 训练 → 验证 → 测试 → 可视化归档 → best.pt 归档 |
 
 两者关系：
 
@@ -32,7 +32,7 @@ config.py（静态配置） ──► yolo.py（动态执行）
                             ├── 调用 .val() 重定向到 run_dir/val/、run_dir/test_results/
                             │     └─ 也不再写 runs/segment/...
                             ├── organize_charts() 归档图表到 analysis/ 下（含 val/、test_results/）
-                            ├── archive_best_model() 把 best.pt 复制到 Config.MODELS_DIR
+                            ├── archive_best_model() 把 best.pt 与 README 归档到 Config.MODELS_DIR/<时间戳>/
                             └── 生成中文图表与报告到 analysis/ val/ test_results/ 子目录
 ```
 
@@ -42,17 +42,7 @@ config.py（静态配置） ──► yolo.py（动态执行）
 
 ## 2. config.py 详解
 
-### 2.1 文件结构
-
-`config.py` 只有一个类 `Config`，所有配置都是**类属性**（静态变量），无需实例化。
-
-```python
-from config import Config
-print(Config.EPOCHS)        # 300
-print(Config.DATASET_ROOT)  # D:\SkinVidCheck\train_data
-```
-
-### 2.2 7 大配置类别
+### 2.1 7 大配置类别
 
 #### ① 路径配置（5 个）
 
@@ -137,9 +127,37 @@ print(Config.DATASET_ROOT)  # D:\SkinVidCheck\train_data
 
 ***
 
+### 2.2 Models 归档 README 内容
+
+`archive_best_model()` 在 `Models/<时间戳>/` 下生成的 `README.md` 包含两节：
+
+**模型概述**（取自 `Config`）：
+
+| 字段   | 来源                                              |
+| ---- | ----------------------------------------------- |
+| 底座模型 | `os.path.basename(Config.MODEL_PATH)`           |
+| 输入尺寸 | `Config.IMG_SIZE × Config.IMG_SIZE`             |
+| 训练轮数 | `Config.EPOCHS`（早停 patience= `Config.PATIENCE`） |
+| 批次大小 | `Config.BATCH_SIZE`                             |
+| 优化器  | `Config.OPTIMIZER`，学习率 `Config.LEARNING_RATE`   |
+| 数据集  | `Config.DATASET_ROOT`                           |
+
+**性能指标**（取自验证 / 测试结果对象）：
+
+| 字段                                          | 来源                              |
+| ------------------------------------------- | ------------------------------- |
+| 验证集 mAP\@0.5、mAP\@0.5:0.95、Precision、Recall | `get_metric(val_results, ...)`  |
+| 测试集 mAP\@0.5、mAP\@0.5:0.95                  | `get_metric(test_results, ...)` |
+
+> 当验证或测试未执行（结果为 `None`）时，对应字段显示 `N/A` 而非 `0.0000`。
+
+<br />
+
+***
+
 ## 3. 使用示例
 
-### 5.1 训练
+### 3.1 训练
 
 ```bash
 python yolo.py

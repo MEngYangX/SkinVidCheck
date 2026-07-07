@@ -2,6 +2,7 @@ MyData/
 training_output/
 __pycache__/
 .vscode/
+.trae/
 Docs/others/
 train_data/
 

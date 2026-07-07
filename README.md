@@ -49,6 +49,28 @@ SkinVidCheck 是一个面向**皮肤病变检测**的深度学习项目，采用
 
 ***
 
+## 模型性能
+
+> 以下为最近一次训练（`2026-07-07_15-52-01`）的归档结果。
+
+### 验证集
+
+| 指标 | 数值 |
+| --- | --- |
+| mAP@0.5 | 0.6466 |
+| mAP@0.5:0.95 | 0.4045 |
+| 精确率 (Precision) | 0.7039 |
+| 召回率 (Recall) | 0.5478 |
+
+### 测试集
+
+| 指标 | 数值 |
+| --- | --- |
+| mAP@0.5 | 0.7907 |
+| mAP@0.5:0.95 | 0.5330 |
+
+***
+
 ## 快速开始
 
 ### 1. 克隆仓库
@@ -107,11 +129,11 @@ python yolo.py
 
 本项目训练数据来源于以下公开 Kaggle 数据集：
 
-| 数据集                                         | 类别示例                          | 来源                                                                                                                                       |
-| ------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **Skin Diseases**                           | 感染性皮肤病、湿疹、痤疮、色素性疾病、良性肿瘤、恶性肿瘤  | [Kaggle - Skin Diseases](https://www.kaggle.com/datasets/ascanipek/skin-diseases)                                                        |
-| **Augmented Skin Conditions Image Dataset** | 痤疮、皮肤癌、湿疹、角化症、粟丘疹、玫瑰痤疮        | [Kaggle - Augmented Skin Conditions Image Dataset](https://www.kaggle.com/datasets/syedalinaqvi/augmented-skin-conditions-image-dataset) |
-| **Skin Disease Dataset**                    | 痤疮、湿疹、银屑病、白癜风、皮肤癌、狼疮等 23 类皮肤病 | [Kaggle - Skin Disease Dataset](https://www.kaggle.com/datasets/pacificrm/skindiseasedataset)                                            |
+| 数据集                                         | 来源                                                                                                                                       |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Skin Diseases**                           | [Kaggle - Skin Diseases](https://www.kaggle.com/datasets/ascanipek/skin-diseases)                                                        |
+| **Augmented Skin Conditions Image Dataset** | [Kaggle - Augmented Skin Conditions Image Dataset](https://www.kaggle.com/datasets/syedalinaqvi/augmented-skin-conditions-image-dataset) |
+| **Skin Disease Dataset**                    | [Kaggle - Skin Disease Dataset](https://www.kaggle.com/datasets/pacificrm/skindiseasedataset)                                            |
 
 ***
 
