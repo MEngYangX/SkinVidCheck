@@ -107,13 +107,6 @@ python dataset_splitter.py -i MyData/finish -o train_data --use-existing-split
 python yolo.py
 ```
 
-训练完成后：
-
-- 完整训练产物：`training_output/<时间戳>/`
-- 图表与报告：`training_output/<时间戳>/analysis/`
-- 最佳权重：`training_output/<时间戳>/weights/best.pt`
-- 自动归档的模型：`Models/<时间戳>.pt`
-
 ***
 
 ## 数据集
