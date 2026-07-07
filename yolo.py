@@ -594,13 +594,18 @@ def main():
             # 数据增强
             augment=True,
             mosaic=Config.MOSAIC,
+            close_mosaic=Config.CLOSE_MOSAIC,
             mixup=Config.MIXUP,
+            copy_paste=Config.COPY_PASTE,
+            erasing=Config.ERASING,
             hsv_h=Config.HSV_H,
             hsv_s=Config.HSV_S,
             hsv_v=Config.HSV_V,
             degrees=Config.DEGREES,
             translate=Config.TRANSLATE,
             scale=Config.SCALE,
+            shear=Config.SHEAR,
+            perspective=Config.PERSPECTIVE,
             flipud=Config.FLIPUD,
             fliplr=Config.FLIPLR,
             
