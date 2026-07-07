@@ -38,15 +38,6 @@
 
 SkinVidCheck 是一个面向**皮肤病变检测**的深度学习项目，采用 **YOLOv26-seg 分割模型**，目前支持 **湿疹识别**，并预留扩展到 22 类皮肤病的可能。
 
-项目核心流程：
-
-1. 用 **Label Studio** 对皮肤图像进行标注
-2. 将标注结果转换为 YOLO 格式
-3. 用 `dataset_splitter.py` 按 8:1:1 切分为 train/val/test
-4. 用 `yolo.py` 一键完成训练、验证、测试、可视化与模型归档
-
-> 所有训练产物按时间戳保存在 `training_output/<时间戳>/` 下，最佳权重自动归档到 `Models/<时间戳>.pt`，无需手动整理。
-
 ***
 
 ## 模型性能
@@ -55,19 +46,19 @@ SkinVidCheck 是一个面向**皮肤病变检测**的深度学习项目，采用
 
 ### 验证集
 
-| 指标 | 数值 |
-| --- | --- |
-| mAP@0.5 | 0.6466 |
-| mAP@0.5:0.95 | 0.4045 |
+| 指标              | 数值     |
+| --------------- | ------ |
+| mAP\@0.5        | 0.6466 |
+| mAP\@0.5:0.95   | 0.4045 |
 | 精确率 (Precision) | 0.7039 |
-| 召回率 (Recall) | 0.5478 |
+| 召回率 (Recall)    | 0.5478 |
 
 ### 测试集
 
-| 指标 | 数值 |
-| --- | --- |
-| mAP@0.5 | 0.7907 |
-| mAP@0.5:0.95 | 0.5330 |
+| 指标            | 数值     |
+| ------------- | ------ |
+| mAP\@0.5      | 0.7907 |
+| mAP\@0.5:0.95 | 0.5330 |
 
 ***
 
@@ -115,13 +106,6 @@ python dataset_splitter.py -i MyData/finish -o train_data --use-existing-split
 ```bash
 python yolo.py
 ```
-
-训练完成后：
-
-- 完整训练产物：`training_output/<时间戳>/`
-- 图表与报告：`training_output/<时间戳>/analysis/`
-- 最佳权重：`training_output/<时间戳>/weights/best.pt`
-- 自动归档的模型：`Models/<时间戳>.pt`
 
 ***
 
